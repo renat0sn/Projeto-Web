@@ -1,5 +1,5 @@
 {
-  "name": "bootstrap",
+  "Name": "bootstrap",
   "description": "The most popular front-end framework for developing responsive, mobile first projects on the web.",
   "keywords": [
     "css",
@@ -21,7 +21,7 @@
   "ignore": [
     "/.*",
     "_config.yml",
-    "CNAME",
+    "CName",
     "composer.json",
     "CONTRIBUTING.md",
     "docs",

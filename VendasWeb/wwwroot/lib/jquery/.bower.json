@@ -1,5 +1,5 @@
 {
-  "name": "jquery",
+  "Name": "jquery",
   "main": "dist/jquery.js",
   "license": "MIT",
   "ignore": [
