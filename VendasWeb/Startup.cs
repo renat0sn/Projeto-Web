@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using VendasWeb.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -39,14 +40,17 @@ namespace VendasWeb
             services.AddDbContext<VendasWebContext>(options =>
                     options.UseMySql(Configuration.GetConnectionString("VendasWebContext"), builder =>
                         builder.MigrationsAssembly("VendasWeb")));
+
+            services.AddScoped<ServicoSeeding>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ServicoSeeding servicoSeeding)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                servicoSeeding.Seed();
             }
             else
             {
