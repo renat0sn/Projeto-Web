@@ -20,5 +20,10 @@ namespace VendasWeb.Controllers
             var list = _servicoVendedor.EncontrarTodos();
             return View(list);
         }
+
+        public IActionResult Criar()
+        {
+            return View();
+        }
     }
 }
