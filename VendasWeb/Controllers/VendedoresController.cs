@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using VendasWeb.Servicos.Exceções;
 using VendasWeb.Models;
 using VendasWeb.Models.ViewModels;
 using VendasWeb.Servicos;
@@ -78,6 +79,47 @@ namespace VendasWeb.Controllers
             }
 
             return View(v);
+        }
+
+        public IActionResult Editar(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var obj = _servicoVendedor.BuscarPorId(id.Value);
+            if(obj == null)
+            {
+                return NotFound();
+            }
+
+            List<Departamento> departamentos = _servicoDepartamento.FindAll().ToList();
+            FormularioVendedorViewModel viewModel = new FormularioVendedorViewModel { Vendedor = obj, Departamentos = departamentos };
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Editar(int id, Vendedor vendedor)
+        {
+            if(id != vendedor.Id)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                _servicoVendedor.Atualizar(vendedor);
+                return RedirectToAction(nameof(Index));
+            }
+            catch(NotFoundException)
+            {
+                return NotFound();
+            }
+            catch (DbConcurrencyException)
+            {
+                return BadRequest();
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ using VendasWeb.Data;
 using VendasWeb.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using VendasWeb.Servicos.Exceções;
 
 namespace VendasWeb.Servicos
 {
@@ -36,6 +37,24 @@ namespace VendasWeb.Servicos
             var v = _context.Vendedor.Find(id);
             _context.Vendedor.Remove(v);
             _context.SaveChanges();
+        }
+
+        public void Atualizar(Vendedor vendedor)
+        {
+            if (!_context.Vendedor.Any(x => x.Id == vendedor.Id))
+            {
+                throw new NotFoundException("Id não encontrado");
+            }
+
+            try
+            {
+                _context.Update(vendedor);
+                _context.SaveChanges();
+            }
+            catch(DbUpdateConcurrencyException e)
+            {
+                throw new DbConcurrencyException(e.Message);
+            }
         }
     }
 }
