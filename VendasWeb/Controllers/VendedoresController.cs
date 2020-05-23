@@ -63,5 +63,21 @@ namespace VendasWeb.Controllers
             _servicoVendedor.Remover(id);
             return RedirectToAction(nameof(Index));
         }
+
+        public IActionResult Detalhes(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            Vendedor v = _servicoVendedor.BuscarPorId(id.Value);
+            if(v == null)
+            {
+                NotFound();
+            }
+
+            return View(v);
+        }
     }
 }
