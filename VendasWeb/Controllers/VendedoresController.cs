@@ -39,5 +39,29 @@ namespace VendasWeb.Controllers
             _servicoVendedor.Inserir(vendedor);
             return RedirectToAction(nameof(Index));
         }
+
+        public IActionResult Remover(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var obj = _servicoVendedor.BuscarPorId(id.Value);
+            if(obj == null)
+            {
+                return NotFound();
+            }
+
+            return View(obj);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Remover(int id)
+        {
+            _servicoVendedor.Remover(id);
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
