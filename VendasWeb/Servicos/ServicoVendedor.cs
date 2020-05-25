@@ -35,9 +35,16 @@ namespace VendasWeb.Servicos
 
         public async Task RemoverAsync(int id)
         {
-            var v = await _context.Vendedor.FindAsync(id);
-            _context.Vendedor.Remove(v);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var v = await _context.Vendedor.FindAsync(id);
+                _context.Vendedor.Remove(v);
+                await _context.SaveChangesAsync();
+            }
+            catch(DbUpdateException)
+            {
+                throw new IntegrityException("Erro ao remover vendedor: já possuí vendas associadas.");
+            }
         }
 
         public async Task AtualizarAsync(Vendedor vendedor)

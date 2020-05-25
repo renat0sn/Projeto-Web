@@ -30,7 +30,6 @@ namespace VendasWeb.Models
         [DisplayFormat(DataFormatString = "{0:F2}")]
         public double SalarioBase { get; set; }
 
-        [Required(ErrorMessage = "{0} requerido")]
         public Departamento Departamento { get; set; }
         public int DepartamentoId { get; set; }
         public ICollection<RegistroDeVendas> Vendas { get; set; } = new List<RegistroDeVendas>();
