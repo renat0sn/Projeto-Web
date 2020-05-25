@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Diagnostics;
 using VendasWeb.Servicos.Exceções;
 using VendasWeb.Models;
 using VendasWeb.Models.ViewModels;
@@ -43,15 +44,15 @@ namespace VendasWeb.Controllers
 
         public IActionResult Remover(int? id)
         {
-            if(id == null)
+            if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id não foi fornecido" });
             }
 
             var obj = _servicoVendedor.BuscarPorId(id.Value);
-            if(obj == null)
+            if (obj == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id não encontrado" });
             }
 
             return View(obj);
@@ -67,15 +68,15 @@ namespace VendasWeb.Controllers
 
         public IActionResult Detalhes(int? id)
         {
-            if(id == null)
+            if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id não foi fornecido" });
             }
 
-            Vendedor v = _servicoVendedor.BuscarPorId(id.Value);
-            if(v == null)
+            var v = _servicoVendedor.BuscarPorId(id.Value);
+            if (v == null)
             {
-                NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id não encontrado" });
             }
 
             return View(v);
@@ -83,15 +84,15 @@ namespace VendasWeb.Controllers
 
         public IActionResult Editar(int? id)
         {
-            if(id == null)
+            if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id não foi fornecido" });
             }
 
             var obj = _servicoVendedor.BuscarPorId(id.Value);
-            if(obj == null)
+            if (obj == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id não encontrado" });
             }
 
             List<Departamento> departamentos = _servicoDepartamento.FindAll().ToList();
@@ -103,23 +104,29 @@ namespace VendasWeb.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Editar(int id, Vendedor vendedor)
         {
-            if(id != vendedor.Id)
+            if (id != vendedor.Id)
             {
-                return BadRequest();
+                return RedirectToAction(nameof(Error), new { message = "Id diferente" });
             }
             try
             {
                 _servicoVendedor.Atualizar(vendedor);
                 return RedirectToAction(nameof(Index));
             }
-            catch(NotFoundException)
+            catch (ApplicationException e)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = e.Message });
             }
-            catch (DbConcurrencyException)
+        }
+
+        public IActionResult Error(string message)
+        {
+            var viewModel = new ErrorViewModel
             {
-                return BadRequest();
-            }
+                Message = message,
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            };
+            return View(viewModel);
         }
     }
 }
